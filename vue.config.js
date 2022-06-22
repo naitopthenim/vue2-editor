@@ -6,17 +6,17 @@ const buildDirectory = buildingDemos ? "public-demos" : "dist";
 
 module.exports = {
   css: {
-    extract: true,
-    loaderOptions: {
-      sass: {
-        data: `
-          @import "@/assets/vue2-editor.scss";
-        `,
-        modules: {
-          auto: () => true
-        }
-      }
-    }
+    extract: false
+    // loaderOptions: {
+    //   sass: {
+    //     data: `
+    //       @import "@/assets/vue2-editor.scss";
+    //     `,
+    //     modules: {
+    //       auto: () => true
+    //     }
+    //   }
+    // }
   },
 
   outputDir: buildDirectory,
