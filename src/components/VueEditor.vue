@@ -231,10 +231,11 @@ export default {
     },
 
     setupCustomImageGalleryHandler() {
-      // const toolbar = this.quill.getModule("toolbar");
-      // toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
+      const toolbar = this.quill.getModule("toolbar");
+      toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
       const elem = document.querySelector(".ql-image-gallery");
-      elem.addEventListener("click", this.customImageGalleryHandler, true);
+      if (elem)
+        elem.addEventListener("click", this.customImageGalleryHandler, true);
 
       // console.log("sdfsd", elem);
 
@@ -246,6 +247,7 @@ export default {
     },
 
     customImageGalleryHandler() {
+      console.log("dasd");
       this.$emit("handleGalleryClick");
     },
 
