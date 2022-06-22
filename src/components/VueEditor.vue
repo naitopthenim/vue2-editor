@@ -1,14 +1,14 @@
 <template>
   <div class="quillWrapper">
-    <slot name="toolbar"></slot>
     <div :id="id" ref="quillContainer"></div>
+    <slot name="toolbar"></slot>
     <input
       v-if="useCustomImageHandler"
       id="file-upload"
       ref="fileInput"
       type="file"
       accept="image/*"
-      style="display:none;"
+      style="display: none"
       @change="emitImageInfo($event)"
     />
   </div>
@@ -27,40 +27,44 @@ export default {
   props: {
     id: {
       type: String,
-      default: "quill-container"
+      default: "quill-container",
     },
     placeholder: {
       type: String,
-      default: ""
+      default: "",
     },
     value: {
       type: String,
-      default: ""
+      default: "",
     },
     disabled: {
-      type: Boolean
+      type: Boolean,
     },
     editorToolbar: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     editorOptions: {
       type: Object,
       required: false,
-      default: () => ({})
+      default: () => ({}),
     },
     useCustomImageHandler: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+    useCustomImageGalleryHandler: {
+      type: Boolean,
+      default: false,
     },
     useMarkdownShortcuts: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data: () => ({
-    quill: null
+    quill: null,
   }),
 
   watch: {
@@ -71,7 +75,7 @@ export default {
     },
     disabled(status) {
       this.quill.enable(!status);
-    }
+    },
   },
 
   mounted() {
@@ -89,6 +93,7 @@ export default {
     initializeEditor() {
       this.setupQuillEditor();
       this.checkForCustomImageHandler();
+      this.checkForCustomImageGalleryHandler();
       this.handleInitialContent();
       this.registerEditorEventListeners();
       this.$emit("ready", this.quill);
@@ -100,7 +105,7 @@ export default {
         modules: this.setModules(),
         theme: "snow",
         placeholder: this.placeholder ? this.placeholder : "",
-        readOnly: this.disabled ? this.disabled : false
+        readOnly: this.disabled ? this.disabled : false,
       };
 
       this.prepareEditorConfig(editorConfig);
@@ -109,7 +114,9 @@ export default {
 
     setModules() {
       const modules = {
-        toolbar: this.editorToolbar.length ? this.editorToolbar : defaultToolbar
+        toolbar: this.editorToolbar.length
+          ? this.editorToolbar
+          : defaultToolbar,
       };
       if (this.useMarkdownShortcuts) {
         Quill.register("modules/markdownShortcuts", MarkdownShortcuts, true);
@@ -136,10 +143,10 @@ export default {
     },
 
     registerPrototypes() {
-      Quill.prototype.getHTML = function() {
+      Quill.prototype.getHTML = function () {
         return this.container.querySelector(".ql-editor").innerHTML;
       };
-      Quill.prototype.getWordCount = function() {
+      Quill.prototype.getWordCount = function () {
         return this.container.querySelector(".ql-editor").innerText.length;
       };
     },
@@ -174,6 +181,9 @@ export default {
 
       if (this.useCustomImageHandler)
         this.handleImageRemoved(delta, oldContents);
+
+      if (this.useCustomImageGalleryHandler)
+        this.handleImageGalleryRemoved(delta, oldContents);
     },
 
     handleImageRemoved(delta, oldContents) {
@@ -181,15 +191,38 @@ export default {
       const deletedContents = currrentContents.diff(oldContents);
       const operations = deletedContents.ops;
 
-      operations.map(operation => {
+      operations.map((operation) => {
         if (operation.insert && operation.insert.hasOwnProperty("image")) {
           const { image } = operation.insert;
           this.$emit("image-removed", image);
         }
       });
     },
+
+    handleImageGalleryRemoved(delta, oldContents) {
+      const currrentContents = this.quill.getContents();
+      const deletedContents = currrentContents.diff(oldContents);
+      const operations = deletedContents.ops;
+
+      operations.map((operation) => {
+        if (
+          operation.insert &&
+          operation.insert.hasOwnProperty("image-gallery")
+        ) {
+          const { image } = operation.insert;
+          this.$emit("image-gallery-removed", image);
+        }
+      });
+    },
+
     checkForCustomImageHandler() {
       this.useCustomImageHandler === true ? this.setupCustomImageHandler() : "";
+    },
+
+    checkForCustomImageGalleryHandler() {
+      this.useCustomImageGalleryHandler === true
+        ? this.setupCustomImageGalleryHandler()
+        : "";
     },
 
     setupCustomImageHandler() {
@@ -197,12 +230,27 @@ export default {
       toolbar.addHandler("image", this.customImageHandler);
     },
 
+    setupCustomImageGalleryHandler() {
+      // const toolbar = this.quill.getModule("toolbar");
+      // toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
+      const elem = document.querySelector(".ql-image-gallery");
+      elem.addEventListener("click", this.customImageGalleryHandler, true);
+
+      // console.log("sdfsd", elem);
+
+      // elem.addEventListener("click", this.handleImageClick, true);
+    },
+
     customImageHandler() {
       this.$refs.fileInput.click();
     },
 
+    customImageGalleryHandler() {
+      this.$emit("handleGalleryClick");
+    },
+
     emitImageInfo($event) {
-      const resetUploader = function() {
+      const resetUploader = function () {
         var uploader = document.getElementById("file-upload");
         uploader.value = "";
       };
@@ -211,8 +259,15 @@ export default {
       const range = Editor.getSelection();
       const cursorLocation = range.index;
       this.$emit("image-added", file, Editor, cursorLocation, resetUploader);
-    }
-  }
+    },
+
+    addImageGalleryInfo(imageGalleryUrl) {
+      const Editor = this.quill;
+      const range = Editor.getSelection();
+      const cursorLocation = range.index;
+      Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
+    },
+  },
 };
 </script>
 
