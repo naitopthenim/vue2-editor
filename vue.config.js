@@ -10,10 +10,20 @@ module.exports = {
       sass: {
         data: `
           @import "@/assets/vue2-editor.scss";
-        `
+        `,
+        module: true
       }
     }
   },
+
+  // css: {
+  //   extract: {
+  //     filename: "[name].css", // to have a name related to a theme
+  //     chunkFilename: "css/[name].css"
+  //   },
+  //   modules: false,
+  //   sourceMap: true
+  // },
 
   outputDir: buildDirectory,
 
@@ -34,5 +44,9 @@ module.exports = {
         quill: "quill"
       });
     }
+    // config
+    //   .entry("theme") // you can add here as much themes as you want
+    //   .add("./src/assets/vue2-editor.scss")
+    //   .end();
   }
 };
