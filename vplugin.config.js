@@ -1,5 +1,5 @@
 module.exports = {
-  globals: {
-    quill: "Quill"
-  }
+  // globals: {
+  //   quill: "Quill"
+  // }
 };
