@@ -233,7 +233,7 @@ export default {
     setupCustomImageGalleryHandler() {
       const toolbar = this.quill.getModule("toolbar");
       toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
-      const elem = document.querySelector(".ql-image-gallery");
+      const elem = document.querySelector(`#${this.id} .ql-image-gallery`);
       if (elem)
         elem.addEventListener("click", this.customImageGalleryHandler, true);
 
@@ -274,4 +274,3 @@ export default {
 </script>
 
 <style src="quill/dist/quill.snow.css"></style>
-<style src="../assets/vue2-editor.scss" lang="scss"></style>
