@@ -837,14 +837,12 @@
         var toolbar = this.quill.getModule("toolbar");
         toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
         var elem = document.querySelector(".ql-image-gallery");
-        if (elem) elem.addEventListener("click", this.customImageGalleryHandler, true); // console.log("sdfsd", elem);
-        // elem.addEventListener("click", this.handleImageClick, true);
+        if (elem) elem.addEventListener("click", this.customImageGalleryHandler, true); // elem.addEventListener("click", this.handleImageClick, true);
       },
       customImageHandler: function customImageHandler() {
         this.$refs.fileInput.click();
       },
       customImageGalleryHandler: function customImageGalleryHandler() {
-        console.log("dasd");
         this.$emit("handleGalleryClick");
       },
       emitImageInfo: function emitImageInfo($event) {

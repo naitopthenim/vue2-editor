@@ -237,8 +237,6 @@ export default {
       if (elem)
         elem.addEventListener("click", this.customImageGalleryHandler, true);
 
-      // console.log("sdfsd", elem);
-
       // elem.addEventListener("click", this.handleImageClick, true);
     },
 
@@ -247,7 +245,6 @@ export default {
     },
 
     customImageGalleryHandler() {
-      console.log("dasd");
       this.$emit("handleGalleryClick");
     },
 
