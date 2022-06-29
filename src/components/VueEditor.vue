@@ -1,5 +1,5 @@
 <template>
-  <div class="quillWrapper">
+  <div :class="`quillWrapper id--${id}`">
     <div :id="id" ref="quillContainer"></div>
     <slot name="toolbar"></slot>
     <input
@@ -233,7 +233,7 @@ export default {
     setupCustomImageGalleryHandler() {
       const toolbar = this.quill.getModule("toolbar");
       toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
-      const elem = document.querySelector(`.ql-image-gallery`);
+      const elem = document.querySelector(`.id--${this.id} .ql-image-gallery`);
       if (elem)
         elem.addEventListener("click", this.customImageGalleryHandler, true);
 
