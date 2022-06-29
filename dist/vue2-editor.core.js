@@ -859,6 +859,7 @@
       },
       addImageGalleryInfo: function addImageGalleryInfo(imageGalleryUrl) {
         var Editor = this.quill;
+        Editor.focus();
         var range = Editor.getSelection();
         if (!range) return;
         var cursorLocation = range.index;

@@ -262,6 +262,7 @@ export default {
 
     addImageGalleryInfo(imageGalleryUrl) {
       const Editor = this.quill;
+      Editor.focus();
       const range = Editor.getSelection();
       if (!range) return;
       const cursorLocation = range.index;
