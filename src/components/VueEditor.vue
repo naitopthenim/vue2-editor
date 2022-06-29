@@ -261,11 +261,11 @@ export default {
     },
 
     addImageGalleryInfo(imageGalleryUrl) {
-      console.log("Editor", imageGalleryUrl);
-      // const Editor = this.quill;
-      // const range = Editor.getSelection();
-      // const cursorLocation = range.index;
-      // Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
+      const Editor = this.quill;
+      const range = Editor.getSelection();
+      if (!range) return;
+      const cursorLocation = range.index;
+      Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
     },
   },
 };

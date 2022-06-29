@@ -4,13 +4,13 @@
     <VueEditor
       ref="vEditor"
       v-model="content"
-      use-custom-image-handler
       use-custom-image-gallery-handler
       use-markdown-shortcuts
       @focus="onEditorFocus"
       @blur="onEditorBlur"
       @imageAdded="handleImageAdded"
       @image-removed="handleImageRemoved"
+      @handleGalleryClick="handleGalleryClick"
     />
   </div>
 </template>
@@ -40,7 +40,7 @@ class ImageBlot extends BlockEmbed {
   static value(node) {
     return {
       url: node.getAttribute("src"),
-      id: node.getAttribute("id")
+      id: node.getAttribute("id"),
     };
   }
 }
@@ -51,7 +51,7 @@ Quill.register(ImageBlot);
 
 export default {
   data: () => ({
-    content: ""
+    content: "",
   }),
 
   methods: {
@@ -73,8 +73,8 @@ export default {
       axios({
         url: `https://api.imgur.com/3/image/${id}`,
         method: "DELETE",
-        headers: { Authorization: "Bearer " + ACCESS_TOKEN }
-      }).then(result => console.log("DELETE RESULT: ", result));
+        headers: { Authorization: "Bearer " + ACCESS_TOKEN },
+      }).then((result) => console.log("DELETE RESULT: ", result));
     },
 
     async handleImageAdded(file, Editor, cursorLocation) {
@@ -85,7 +85,7 @@ export default {
         url: "https://api.imgur.com/3/image",
         method: "POST",
         headers: { Authorization: "Client-ID " + CLIENT_ID },
-        data: formData
+        data: formData,
       });
       console.log("TCL: handleImageAdded -> data", data);
 
@@ -95,7 +95,7 @@ export default {
         "image",
         {
           id,
-          url: link
+          url: link,
         },
         Quill.sources.USER
       );
@@ -104,8 +104,14 @@ export default {
     handleImageRemoved(image) {
       console.log("handleImageRemoved -> image", image);
       this.deleteImage(image.id);
-    }
-  }
+    },
+
+    handleGalleryClick() {
+      this.$refs.vEditor.addImageGalleryInfo(
+        "http://commondatastorage.googleapis.com/codeskulptor-assets/lathrop/nebula_blue.s2014.png"
+      );
+    },
+  },
 };
 </script>
 
