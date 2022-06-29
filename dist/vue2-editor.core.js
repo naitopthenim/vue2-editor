@@ -858,10 +858,10 @@
         this.$emit("image-added", file, Editor, cursorLocation, resetUploader);
       },
       addImageGalleryInfo: function addImageGalleryInfo(imageGalleryUrl) {
-        var Editor = this.quill;
-        var range = Editor.getSelection();
-        var cursorLocation = range.index;
-        Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
+        console.log("Editor", imageGalleryUrl); // const Editor = this.quill;
+        // const range = Editor.getSelection();
+        // const cursorLocation = range.index;
+        // Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
       }
     }
   };
