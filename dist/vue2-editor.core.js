@@ -836,7 +836,7 @@
       setupCustomImageGalleryHandler: function setupCustomImageGalleryHandler() {
         var toolbar = this.quill.getModule("toolbar");
         toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
-        var elem = document.querySelector(".ql-image-gallery");
+        var elem = document.querySelector(".id--".concat(this.id, " .ql-image-gallery"));
         if (elem) elem.addEventListener("click", this.customImageGalleryHandler, true); // elem.addEventListener("click", this.handleImageClick, true);
       },
       customImageHandler: function customImageHandler() {
@@ -954,7 +954,7 @@
   /* script */
   const __vue_script__ = script;
   /* template */
-  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{staticClass:"quillWrapper"},[_c('div',{ref:"quillContainer",attrs:{"id":_vm.id}}),_vm._v(" "),_vm._t("toolbar"),_vm._v(" "),(_vm.useCustomImageHandler)?_c('input',{ref:"fileInput",staticStyle:{"display":"none"},attrs:{"id":"file-upload","type":"file","accept":"image/*"},on:{"change":function($event){return _vm.emitImageInfo($event)}}}):_vm._e()],2)};
+  var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('div',{class:("quillWrapper id--" + _vm.id)},[_c('div',{ref:"quillContainer",attrs:{"id":_vm.id}}),_vm._v(" "),_vm._t("toolbar"),_vm._v(" "),(_vm.useCustomImageHandler)?_c('input',{ref:"fileInput",staticStyle:{"display":"none"},attrs:{"id":"file-upload","type":"file","accept":"image/*"},on:{"change":function($event){return _vm.emitImageInfo($event)}}}):_vm._e()],2)};
   var __vue_staticRenderFns__ = [];
 
     /* style */
