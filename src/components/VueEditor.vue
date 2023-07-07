@@ -27,44 +27,48 @@ export default {
   props: {
     id: {
       type: String,
-      default: "quill-container",
+      default: "quill-container"
     },
     placeholder: {
       type: String,
-      default: "",
+      default: ""
     },
     value: {
       type: String,
-      default: "",
+      default: ""
     },
     disabled: {
-      type: Boolean,
+      type: Boolean
     },
     editorToolbar: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     editorOptions: {
       type: Object,
       required: false,
-      default: () => ({}),
+      default: () => ({})
     },
     useCustomImageHandler: {
       type: Boolean,
-      default: false,
+      default: false
     },
     useCustomImageGalleryHandler: {
       type: Boolean,
-      default: false,
+      default: false
+    },
+    useCustomCaptionHandler: {
+      type: Boolean,
+      default: false
     },
     useMarkdownShortcuts: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
 
   data: () => ({
-    quill: null,
+    quill: null
   }),
 
   watch: {
@@ -75,7 +79,7 @@ export default {
     },
     disabled(status) {
       this.quill.enable(!status);
-    },
+    }
   },
 
   mounted() {
@@ -94,6 +98,7 @@ export default {
       this.setupQuillEditor();
       this.checkForCustomImageHandler();
       this.checkForCustomImageGalleryHandler();
+      this.checkForCustomCaptionHandler();
       this.handleInitialContent();
       this.registerEditorEventListeners();
       this.$emit("ready", this.quill);
@@ -105,18 +110,20 @@ export default {
         modules: this.setModules(),
         theme: "snow",
         placeholder: this.placeholder ? this.placeholder : "",
-        readOnly: this.disabled ? this.disabled : false,
+        readOnly: this.disabled ? this.disabled : false
       };
 
       this.prepareEditorConfig(editorConfig);
       this.quill = new Quill(this.$refs.quillContainer, editorConfig);
+
+      // this.quill.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => {
+      //   return new Delta().insert(node.data);
+      // });
     },
 
     setModules() {
       const modules = {
-        toolbar: this.editorToolbar.length
-          ? this.editorToolbar
-          : defaultToolbar,
+        toolbar: this.editorToolbar.length ? this.editorToolbar : defaultToolbar
       };
       if (this.useMarkdownShortcuts) {
         Quill.register("modules/markdownShortcuts", MarkdownShortcuts, true);
@@ -143,10 +150,10 @@ export default {
     },
 
     registerPrototypes() {
-      Quill.prototype.getHTML = function () {
+      Quill.prototype.getHTML = function() {
         return this.container.querySelector(".ql-editor").innerHTML;
       };
-      Quill.prototype.getWordCount = function () {
+      Quill.prototype.getWordCount = function() {
         return this.container.querySelector(".ql-editor").innerText.length;
       };
     },
@@ -184,14 +191,17 @@ export default {
 
       if (this.useCustomImageGalleryHandler)
         this.handleImageGalleryRemoved(delta, oldContents);
+
+      if (this.useCustomCaptionHandler)
+        this.handleCaptionRemoved(delta, oldContents);
     },
 
     handleImageRemoved(delta, oldContents) {
-      const currrentContents = this.quill.getContents();
-      const deletedContents = currrentContents.diff(oldContents);
+      const currentContents = this.quill.getContents();
+      const deletedContents = currentContents.diff(oldContents);
       const operations = deletedContents.ops;
 
-      operations.map((operation) => {
+      operations.map(operation => {
         if (operation.insert && operation.insert.hasOwnProperty("image")) {
           const { image } = operation.insert;
           this.$emit("image-removed", image);
@@ -200,17 +210,33 @@ export default {
     },
 
     handleImageGalleryRemoved(delta, oldContents) {
-      const currrentContents = this.quill.getContents();
-      const deletedContents = currrentContents.diff(oldContents);
+      const currentContents = this.quill.getContents();
+      const deletedContents = currentContents.diff(oldContents);
       const operations = deletedContents.ops;
 
-      operations.map((operation) => {
+      operations.map(operation => {
         if (
           operation.insert &&
           operation.insert.hasOwnProperty("image-gallery")
         ) {
           const { image } = operation.insert;
           this.$emit("image-gallery-removed", image);
+        }
+      });
+    },
+
+    handleCaptionRemoved(delta, oldContents) {
+      const currentContents = this.quill.getContents();
+      const deletedContents = currentContents.diff(oldContents);
+      const operations = deletedContents.ops;
+
+      operations.map(operation => {
+        if (
+          operation.insert &&
+          operation.insert.hasOwnProperty("caption-text")
+        ) {
+          const { text } = operation.insert;
+          this.$emit("caption-text-removed", text);
         }
       });
     },
@@ -225,6 +251,12 @@ export default {
         : "";
     },
 
+    checkForCustomCaptionHandler() {
+      this.useCustomCaptionHandler === true
+        ? this.setupCustomCaptionHandler()
+        : "";
+    },
+
     setupCustomImageHandler() {
       const toolbar = this.quill.getModule("toolbar");
       toolbar.addHandler("image", this.customImageHandler);
@@ -233,9 +265,23 @@ export default {
     setupCustomImageGalleryHandler() {
       const toolbar = this.quill.getModule("toolbar");
       toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
+      console.log(toolbar);
       const elem = document.querySelector(`.id--${this.id} .ql-image-gallery`);
       if (elem)
         elem.addEventListener("click", this.customImageGalleryHandler, true);
+
+      // elem.addEventListener("click", this.handleImageClick, true);
+    },
+
+    setupCustomCaptionHandler() {
+      const toolbar = this.quill.getModule("toolbar");
+      toolbar.addHandler("caption-text", this.customCaptionHandler);
+
+      const elem = document.querySelector(`.id--${this.id} .ql-caption-text`);
+      if (elem) {
+        elem.innerHTML = "Caption";
+        elem.addEventListener("click", this.customCaptionHandler, true);
+      }
 
       // elem.addEventListener("click", this.handleImageClick, true);
     },
@@ -248,8 +294,18 @@ export default {
       this.$emit("handleGalleryClick");
     },
 
+    customCaptionHandler() {
+      const Editor = this.quill;
+      Editor.focus();
+      const range = Editor.getSelection();
+      if (!range) return;
+      const cursorLocation = range.index;
+      console.log(cursorLocation);
+      // Editor.insertEmbed(cursorLocation, "caption-text", imageGalleryUrl);
+    },
+
     emitImageInfo($event) {
-      const resetUploader = function () {
+      const resetUploader = function() {
         var uploader = document.getElementById("file-upload");
         uploader.value = "";
       };
@@ -267,8 +323,8 @@ export default {
       if (!range) return;
       const cursorLocation = range.index;
       Editor.insertEmbed(cursorLocation, "image", imageGalleryUrl);
-    },
-  },
+    }
+  }
 };
 </script>
 

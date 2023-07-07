@@ -1,6 +1,6 @@
 const defaultToolbar = [
   [{ header: [false, 1, 2, 3, 4, 5, 6] }],
-  ["bold", "italic", "underline", "strike"], // toggled buttons
+  ["bold", "italic", "underline", "strike", "caption-text"], // toggled buttons
   [
     { align: "" },
     { align: "center" },
