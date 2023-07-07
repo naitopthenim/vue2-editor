@@ -300,8 +300,11 @@ export default {
       const range = Editor.getSelection();
       if (!range) return;
       const cursorLocation = range.index;
-      console.log(cursorLocation);
-      // Editor.insertEmbed(cursorLocation, "caption-text", imageGalleryUrl);
+      // Editor.insertEmbed(cursorLocation, "italic", "Caption");
+      // Editor.root.innerHTML = "Caption";
+      // this.quill.formatLine(selection.index, 1, "italic", true);
+      Editor.deleteText(cursorLocation, range.length);
+      Editor.insertText(cursorLocation, "Caption", { italic: true });
     },
 
     emitImageInfo($event) {
