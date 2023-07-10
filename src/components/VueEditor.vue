@@ -265,7 +265,7 @@ export default {
     setupCustomImageGalleryHandler() {
       const toolbar = this.quill.getModule("toolbar");
       toolbar.addHandler("image-gallery", this.customImageGalleryHandler);
-      console.log(toolbar);
+      // console.log(toolbar);
       const elem = document.querySelector(`.id--${this.id} .ql-image-gallery`);
       if (elem)
         elem.addEventListener("click", this.customImageGalleryHandler, true);
@@ -300,11 +300,14 @@ export default {
       const range = Editor.getSelection();
       if (!range) return;
       const cursorLocation = range.index;
-      // Editor.insertEmbed(cursorLocation, "italic", "Caption");
-      // Editor.root.innerHTML = "Caption";
-      // this.quill.formatLine(selection.index, 1, "italic", true);
-      Editor.deleteText(cursorLocation, range.length);
-      Editor.insertText(cursorLocation, "Caption", { italic: true });
+
+      /**
+       * @var Quill
+       */
+      Editor.formatText(cursorLocation, range.length, {
+        script: "sub",
+        italic: true
+      });
     },
 
     emitImageInfo($event) {
